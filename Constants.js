@@ -5,15 +5,19 @@ export const pickerSelectStyles = {
       paddingHorizontal: 10,
       color: 'white',
       fontWeight:"bold",
+      maginRight:20,
     },
     inputAndroid: {
       fontSize: 16,
       paddingHorizontal: 10,
       paddingVertical: 8,
-      borderWidth: 0.5,
-      borderColor: 'purple',
-      borderRadius: 8,
       color: 'black',
-      paddingRight: 30, // to ensure the text is never behind the icon
+      paddingRight: 30,
     },
 };
+
+export const minutes = Array.from({ length: 61 }, (_, index) => index);
+
+export const seconds = Array.from({ length: 61 }, (_, index) => index);
+
+export const hours = Array.from({ length: 24 }, (_, index) => index);

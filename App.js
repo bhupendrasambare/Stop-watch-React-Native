@@ -2,8 +2,8 @@ import { SafeAreaView, Text, TouchableOpacity, View ,Dimensions} from 'react-nat
 import React, { useEffect,useState } from 'react'
 import {PauseCircleIcon, PlayCircleIcon, StopCircleIcon} from "react-native-heroicons/outline"
 import { CountdownCircleTimer } from 'react-native-countdown-circle-timer'
-import RNPickerSelect from 'react-native-picker-select';
-import { pickerSelectStyles } from './Style';
+import ScrollPicker from 'react-native-picker-scrollview';
+import { hours, minutes, pickerSelectStyles, seconds } from './Constants';
 
 export default function App() {
     const { width, height } = Dimensions.get('window');
@@ -22,20 +22,28 @@ export default function App() {
         setKey(prevKey => prevKey + 1)
     };
 
-    const minutes = Array.from({ length: 60 }, (_, i) => ({
-        label: i < 10 ? `0${i}` : `${i}`,
-        value: i < 10 ? `0${i}` : `${i}`,
-    }));
-
-    const seconds = Array.from({ length: 60 }, (_, i) => ({
-        label: i < 10 ? `0${i}` : `${i}`,
-        value: i < 10 ? `0${i}` : `${i}`,
-    }));
-
     useEffect(() => {
+        resetTimer()
         setDuration(second + (60 * minute) + (3600* hour));
     }, [second,minute,hour])
     
+    const onStart = ()=>{
+        if(duration>0){
+            resetTimer();
+            setStart(true)
+            setPlay(true)
+        }
+    }
+    
+    const onEnd = ()=>{
+        resetTimer();
+        setStart(false)
+        setPlay(false)
+        setDuration(0)
+        setHour(0)
+        setMinute(0)
+        setSecond(0)
+    }
 
     return (
         <View className="flex-1 bg-sky-950">
@@ -45,12 +53,12 @@ export default function App() {
                         <CountdownCircleTimer
                             size={width*0.8}
                             isPlaying={play}
-                            duration={10}
-                            initialRemainingTime={60}
+                            duration={duration}
                             colors={"#0563e8"}
                             trailStrokeWidth={3}
                             strokeWidth={8}
                             key={key}
+                            onComplete={() =>onEnd()}
                             >
                             {({ remainingTime, elapsedTime }) =>(
                                 <View className="items-center">
@@ -62,47 +70,92 @@ export default function App() {
                         </CountdownCircleTimer>
                     }
                     { !start &&
-                        <View className="flex-row text-white">
-                            <Text> : </Text>
-                            <RNPickerSelect
-                                placeholder={{ label: 'HH', value: 0 }}
-                                items={hour}
-                                onValueChange={(value) => setHour(value)}
-                                value={hour}
-                                style={pickerSelectStyles}
-                            />
-                            <RNPickerSelect
-                                placeholder={{ label: 'MM', value: 0 }}
-                                items={minutes}
-                                onValueChange={(value) => setMinute(value)}
-                                value={minute}
-                                style={pickerSelectStyles}
-                            />
-                            <RNPickerSelect
-                                placeholder={{ label: 'SS', value: 0 }}
-                                items={seconds}
-                                onValueChange={(value) => setSecond(value)}
-                                value={second}
-                                style={pickerSelectStyles}
-                            />
+                    <View className="flex-row  text-white" style={{width:250}}>
+                        <ScrollPicker            
+                            dataSource={hours}
+                            selectedIndex={hour}
+                            wrapperColor={'#082f49'}
+                            highlightColor={'#082f49'}
+                            itemHeight={50}
+                            wrapperHeight={150}
+                            renderItem={(data, index, isSelected) => {
+                                return(
+                                    <View>
+                                        <Text className={(isSelected)?"text-white font-bold text-5xl":" text-sky-200 text-2xl text-center"}>{data}</Text>
+                                    </View>
+                                )
+                            }}
+                            onValueChange={(data) => {
+                                setHour(data)
+                            }}
+                        />
+                        <View className="flex-col justify-center">
+                            <Text className="text-white text-5xl"> : </Text>
                         </View>
+                        <ScrollPicker            
+                            dataSource={minutes}
+                            selectedIndex={minute}
+                            wrapperColor={'#082f49'}
+                            highlightColor={'#082f49'}
+                            itemHeight={50}
+                            wrapperHeight={150}
+                            renderItem={(data, index, isSelected) => {
+                                return(
+                                    <View>
+                                        <Text className={(isSelected)?"text-white font-bold text-5xl":" text-sky-200 text-2xl text-center"}>{data}</Text>
+                                    </View>
+                                )
+                            }}
+                            onValueChange={(data) => {
+                                setMinute(data)
+                            }}
+                        />
+                        <View className="flex-col justify-center">
+                            <Text className="text-white text-5xl"> : </Text>
+                        </View>
+                        <ScrollPicker     
+                            dataSource={seconds}
+                            selectedIndex={second}
+                            wrapperColor={'#082f49'}
+                            highlightColor={'#082f49'}
+                            itemHeight={50}
+                            wrapperHeight={150}
+                            renderItem={(data, index, isSelected) => {
+                                return(
+                                    <View>
+                                        <Text className={(isSelected)?"text-white font-bold text-5xl":" text-sky-200 text-2xl text-center"}>{data}</Text>
+                                    </View>
+                                )
+                            }}
+                            onValueChange={(data) => {
+                                setSecond(data)
+                            }}
+                        />
+                    </View>
                     }
                 </View>
 
                 <View className="absolute bottom-0 flex-row justify-center right-0 left-0 pb-10">
-                    {play && 
+                    {play && start && 
                         <TouchableOpacity onPress={()=>setPlay(false)}>
-                            <PauseCircleIcon size={50}  strokeWidth={2} color="white"/>
+                            <PauseCircleIcon size={50}  strokeWidth={1} color="white"/>
                         </TouchableOpacity>
                     }
-                    {!play && 
+                    {!play && start && 
                         <TouchableOpacity onPress={()=>setPlay(true)}>
-                            <PlayCircleIcon size={50}  strokeWidth={2} color="white"/>
+                            <PlayCircleIcon size={50}  strokeWidth={1} color="white"/>
                         </TouchableOpacity>
                     }
-                    <TouchableOpacity onPress={resetTimer}>
-                        <StopCircleIcon size={50}  strokeWidth={2} color="white"/>
-                    </TouchableOpacity>
+                    {start &&
+                        <TouchableOpacity onPress={onEnd}>
+                            <StopCircleIcon size={50}  strokeWidth={1} color="white"/>
+                        </TouchableOpacity>
+                    }
+                    {!start && 
+                        <TouchableOpacity onPress={onStart}>
+                            <PlayCircleIcon size={50}  strokeWidth={1} color="white"/>
+                        </TouchableOpacity>
+                    }
                 </View>
             </SafeAreaView>
         </View>
