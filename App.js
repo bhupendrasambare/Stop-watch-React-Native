@@ -3,12 +3,17 @@ import React, { useEffect,useState } from 'react'
 import {PauseCircleIcon, PlayCircleIcon, StopCircleIcon} from "react-native-heroicons/outline"
 import { CountdownCircleTimer } from 'react-native-countdown-circle-timer'
 import ScrollPicker from 'react-native-picker-scrollview';
-import { hours, minutes, pickerSelectStyles, seconds } from './Constants';
+import { formatTime, hours, minutes, pickerSelectStyles, seconds } from './Constants';
 
+var Sound = require('react-native-sound');
+Sound.setCategory('Playback');
+const { width, height } = Dimensions.get('window');
+    
+const whoosh = new Sound('sound.mp3', Sound.MAIN_BUNDLE, (error) => {});
 export default function App() {
-    const { width, height } = Dimensions.get('window');
     const [play, setPlay] = useState(false)
-    const [start, setStart] = useState(false)
+    const [start, setStart] = useState(false);
+    const [stopTime,setStopTime] = useState(false);
     const [key, setKey] = useState(0);
 
     const [duration, setDuration] = useState(0);
@@ -34,7 +39,7 @@ export default function App() {
             setPlay(true)
         }
     }
-    
+
     const onEnd = ()=>{
         resetTimer();
         setStart(false)
@@ -43,6 +48,25 @@ export default function App() {
         setHour(0)
         setMinute(0)
         setSecond(0)
+    }
+
+    const onMusicStart = ()=>{
+        whoosh.setPan(1);
+        whoosh.setVolume(1);
+        whoosh.setNumberOfLoops(-1);
+        whoosh.play();
+        setStopTime(true);
+        console.log("Music on")
+    }
+
+    const onMusicEnd = ()=>{
+        console.log("Sound off 1")
+        whoosh.stop(() => {
+            console.log("Sound off 2")
+        });
+        console.log("Sound off 3")
+        onEnd();
+        setStopTime(false)
     }
 
     return (
@@ -58,13 +82,23 @@ export default function App() {
                             trailStrokeWidth={3}
                             strokeWidth={8}
                             key={key}
-                            onComplete={() =>onEnd()}
+                            onComplete={() =>onMusicStart()}
                             >
                             {({ remainingTime, elapsedTime }) =>(
                                 <View className="items-center">
-                                    <Text className="font-bold text-8xl text-white">
-                                    {remainingTime}
-                                    </Text>
+                                    { !stopTime && 
+                                        <Text className="font-bold text-5xl text-white">
+                                            {formatTime(remainingTime)}
+                                        </Text>
+                                    }
+                                    {
+                                        stopTime && 
+                                        <TouchableOpacity onPress={()=>onMusicEnd()}>
+                                            <View className="rounded-full shadow-md shadow-white bg-white p-5">
+                                                <Text className="text-2xl">Stop Time</Text>
+                                            </View>
+                                        </TouchableOpacity>
+                                    }
                                 </View>
                             )}
                         </CountdownCircleTimer>
@@ -151,7 +185,7 @@ export default function App() {
                             <StopCircleIcon size={50}  strokeWidth={1} color="white"/>
                         </TouchableOpacity>
                     }
-                    {!start && 
+                    {setStopTime && !start && 
                         <TouchableOpacity onPress={onStart}>
                             <PlayCircleIcon size={50}  strokeWidth={1} color="white"/>
                         </TouchableOpacity>

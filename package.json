@@ -17,6 +17,7 @@
     "react-native-heroicons": "^3.2.0",
     "react-native-picker-scrollview": "^1.0.1",
     "react-native-picker-select": "^9.0.0",
+    "react-native-sound": "^0.11.2",
     "react-native-svg": "^14.0.0"
   },
   "devDependencies": {

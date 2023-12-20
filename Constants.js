@@ -21,3 +21,11 @@ export const minutes = Array.from({ length: 61 }, (_, index) => index);
 export const seconds = Array.from({ length: 61 }, (_, index) => index);
 
 export const hours = Array.from({ length: 24 }, (_, index) => index);
+
+export const formatTime = (seconds) => {
+  const hours = Math.floor(seconds / 3600);
+  const minutes = Math.floor((seconds % 3600) / 60);
+  const remainingSeconds = seconds % 60;
+
+  return `${hours > 0 ? hours + ':' : ''}${minutes > 0 ? minutes + ':' : ''}${remainingSeconds}`;
+};
