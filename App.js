@@ -56,21 +56,17 @@ export default function App() {
         whoosh.setNumberOfLoops(-1);
         whoosh.play();
         setStopTime(true);
-        console.log("Music on")
     }
 
     const onMusicEnd = ()=>{
-        console.log("Sound off 1")
         whoosh.stop(() => {
-            console.log("Sound off 2")
         });
-        console.log("Sound off 3")
         onEnd();
         setStopTime(false)
     }
 
     return (
-        <View className="flex-1 bg-sky-950">
+        <View className="flex-1 bg-black">
             <SafeAreaView className="min-h-full">
                 <View className="items-center mt-20 w-full">
                     { start &&
@@ -79,6 +75,7 @@ export default function App() {
                             isPlaying={play}
                             duration={duration}
                             colors={"#0563e8"}
+                            trailColor={"#ffffff"}
                             trailStrokeWidth={3}
                             strokeWidth={8}
                             key={key}
@@ -94,8 +91,8 @@ export default function App() {
                                     {
                                         stopTime && 
                                         <TouchableOpacity onPress={()=>onMusicEnd()}>
-                                            <View className="rounded-full shadow-md shadow-white bg-white p-5">
-                                                <Text className="text-2xl">Stop Time</Text>
+                                            <View className="rounded-full shadow-sm shadow-slate-500 bg-sky-600 p-5">
+                                                <Text className="text-2xl text-white font-bold">Stop Time</Text>
                                             </View>
                                         </TouchableOpacity>
                                     }
@@ -108,8 +105,8 @@ export default function App() {
                         <ScrollPicker            
                             dataSource={hours}
                             selectedIndex={hour}
-                            wrapperColor={'#082f49'}
-                            highlightColor={'#082f49'}
+                            wrapperColor={'#000000'}
+                            highlightColor={'#000000'}
                             itemHeight={50}
                             wrapperHeight={150}
                             renderItem={(data, index, isSelected) => {
@@ -129,8 +126,8 @@ export default function App() {
                         <ScrollPicker            
                             dataSource={minutes}
                             selectedIndex={minute}
-                            wrapperColor={'#082f49'}
-                            highlightColor={'#082f49'}
+                            wrapperColor={'#000000'}
+                            highlightColor={'#000000'}
                             itemHeight={50}
                             wrapperHeight={150}
                             renderItem={(data, index, isSelected) => {
@@ -150,8 +147,8 @@ export default function App() {
                         <ScrollPicker     
                             dataSource={seconds}
                             selectedIndex={second}
-                            wrapperColor={'#082f49'}
-                            highlightColor={'#082f49'}
+                            wrapperColor={'#000000'}
+                            highlightColor={'#000000'}
                             itemHeight={50}
                             wrapperHeight={150}
                             renderItem={(data, index, isSelected) => {
